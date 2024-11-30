@@ -8,6 +8,7 @@ public class CollisionGround : MonoBehaviour
     public LayerMask whatIsGround;
     public float maxSlopeAngle = 35f;
     private Vector3 normalVector = Vector3.up;
+    public Animator animator;
 
     private void Start()
     {
@@ -24,6 +25,7 @@ public class CollisionGround : MonoBehaviour
     private bool cancellingGrounded;
     private void OnCollisionEnter(Collision other)
    {
+        animator.SetBool("Other", false);
         PlayerMove.grounded = true;
         PlayerMove.grounded = Physics.Raycast(transform.position, Vector3.down, 1.1f, whatIsGround);
 

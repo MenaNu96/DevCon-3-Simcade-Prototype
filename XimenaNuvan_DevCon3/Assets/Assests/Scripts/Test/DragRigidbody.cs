@@ -1,9 +1,6 @@
 using UnityEngine;
 using System;
 
-
-
-[RequireComponent(typeof(Rigidbody))]
 public class DragRigidbody : MonoBehaviour
 {
     public float force = 600;
