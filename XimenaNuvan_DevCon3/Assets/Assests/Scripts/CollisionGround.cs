@@ -26,8 +26,8 @@ public class CollisionGround : MonoBehaviour
     private void OnCollisionEnter(Collision other)
    {
         animator.SetBool("Other", false);
-        PlayerMove.grounded = true;
-        PlayerMove.grounded = Physics.Raycast(transform.position, Vector3.down, 1.1f, whatIsGround);
+        //PlayerMove.grounded = true;
+       // PlayerMove.grounded = Physics.Raycast(transform.position, Vector3.down, 1.1f, whatIsGround);
 
         //Make sure we are only checking for walkable layers
         int layer = other.gameObject.layer;

@@ -2,11 +2,22 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System;
+using Unity.Physics;
 
 public class MovePlayer : MonoBehaviour
 {
+
+    [SerializeField]
+    Rigidbody rigidbody3D;
+
+    [SerializeField]
+    ConfigurableJoint mainJoint;
+
+    //Input
+    Vector2 moveInputVector = Vector2.zero;
+
     //Assingables
-    
+
     public Transform orientation;
     public Animator animator;
 
@@ -15,8 +26,7 @@ public class MovePlayer : MonoBehaviour
 
     //Rotation and look
     private float xRotation;
-    private float sensitivity = 50f;
-    private float sensMultiplier = 1f;
+  
 
     //Movement
     public float moveSpeed = 4500;
@@ -68,8 +78,8 @@ public class MovePlayer : MonoBehaviour
 
     private void Update()
     {
+
         MyInput();
-       
     }
 
     /// <summary>
@@ -112,11 +122,7 @@ public class MovePlayer : MonoBehaviour
         float maxSpeed = this.maxSpeed;
 
         //If sliding down a ramp, add force down so player stays grounded and also builds speed
-        if (crouching && grounded && readyToJump)
-        {
-            rb.AddForce(Vector3.down * Time.deltaTime * 3000);
-            return;
-        }
+      
 
         //If speed is larger than maxspeed, cancel out the input so you don't go over max speed
         if (x > 0 && xMag > maxSpeed) x = 0;
@@ -124,22 +130,6 @@ public class MovePlayer : MonoBehaviour
         if (y > 0 && yMag > maxSpeed) y = 0;
         if (y < 0 && yMag < -maxSpeed) y = 0;
 
-        //Some multipliers
-        float multiplier = 1f, multiplierV = 1f;
-
-        // Movement in air
-        if (!grounded)
-        {
-            multiplier = 0.5f;
-            multiplierV = 0.5f;
-        }
-
-        // Movement while sliding
-        if (grounded && crouching) multiplierV = 0f;
-
-        //Apply forces to move player
-        rb.AddForce(orientation.transform.forward * y * moveSpeed * Time.deltaTime * multiplier * multiplierV);
-        rb.AddForce(orientation.transform.right * x * moveSpeed * Time.deltaTime * multiplier);
     }
 
     private void Jump()
@@ -187,11 +177,11 @@ public class MovePlayer : MonoBehaviour
         }
 
         //Counter movement
-        if (Math.Abs(mag.x) > threshold && Math.Abs(x) < 0.05f || (mag.x < -threshold && x > 0) || (mag.x > threshold && x < 0))
+        if (Mathf.Abs(mag.x) > threshold && Mathf.Abs(x) < 0.05f || (mag.x < -threshold && x > 0) || (mag.x > threshold && x < 0))
         {
             rb.AddForce(moveSpeed * orientation.transform.right * Time.deltaTime * -mag.x * counterMovement);
         }
-        if (Math.Abs(mag.y) > threshold && Math.Abs(y) < 0.05f || (mag.y < -threshold && y > 0) || (mag.y > threshold && y < 0))
+        if (Mathf.Abs(mag.y) > threshold && Mathf.Abs(y) < 0.05f || (mag.y < -threshold && y > 0) || (mag.y > threshold && y < 0))
         {
             rb.AddForce(moveSpeed * orientation.transform.forward * Time.deltaTime * -mag.y * counterMovement);
         }

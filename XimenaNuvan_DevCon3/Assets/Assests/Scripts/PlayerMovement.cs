@@ -20,51 +20,55 @@ public class PlayerMovement : MonoBehaviour
 
     private void FixedUpdate()
     {
+       
+    }
+
+    public void movement()
+    {
 
         if (isGrounded)
         {
             if (Input.GetKey(KeyCode.W))
-        {
-            Anim.SetBool("IsWalk", true);
-            hips1.AddForce(-hips1.transform.forward * speed);
-           
-            //if (Input.GetKey(KeyCode.LeftShift))
-           // {
-            //    Anim.SetBool("IsRun", true);
-           //     hips1.AddForce(-hips1.transform.forward * speed * 1.5f);
-           // }
-        }
-            
-        else
-        {
-            Anim.SetBool("IsWalk", false);
-            Anim.SetBool("IsRun", false);
-        }
-
-        if (Input.GetKey(KeyCode.A))
-        {
-            hips1.AddForce(hips1.transform.right * strafeSpeed);
-        }
-        if (Input.GetKey(KeyCode.S))
-        {
-            hips1.AddForce(hips1.transform.forward * speed);
-        }
-        if (Input.GetKey(KeyCode.D))
-        {
-            hips1.AddForce(-hips1.transform.right * strafeSpeed);
-        }
-        if (Input.GetKey(KeyCode.Space)) 
-        {
-            Anim.SetBool("IsJumping", true);
-            
-                hips1.AddForce(new Vector3(0,jumpForce,0));
-                isGrounded = false;
-        }
-        else
             {
-                Anim.SetBool("IsJumping", false);
+                hips1.AddForce(-hips1.transform.forward * speed);
+
+                //if (Input.GetKey(KeyCode.LeftShift))
+                // {
+                //    Anim.SetBool("IsRun", true);
+                //     hips1.AddForce(-hips1.transform.forward * speed * 1.5f);
+                // }
             }
-        
+
+            else
+            {
+                Anim.SetBool("IsWalk", false);
+
+            }
+
+            if (Input.GetKey(KeyCode.A))
+            {
+                hips1.AddForce(hips1.transform.right * strafeSpeed);
+            }
+            if (Input.GetKey(KeyCode.S))
+            {
+                hips1.AddForce(hips1.transform.forward * speed);
+            }
+            if (Input.GetKey(KeyCode.D))
+            {
+                hips1.AddForce(-hips1.transform.right * strafeSpeed);
+            }
+            if (Input.GetKey(KeyCode.Space))
+            {
+                Anim.SetBool("Other", true);
+
+                hips1.AddForce(new Vector3(0, jumpForce, 0));
+                isGrounded = false;
+            }
+            else
+            {
+                Anim.SetBool("Other", false);
+            }
+
         }
     }
 

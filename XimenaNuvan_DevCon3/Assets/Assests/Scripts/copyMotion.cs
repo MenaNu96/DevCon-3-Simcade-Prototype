@@ -8,6 +8,7 @@ public class copyMotion : MonoBehaviour
     public Transform TargetLimb;
     public bool mirror;
     ConfigurableJoint cjoint;
+    
 
     private void Start()
     {

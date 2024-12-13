@@ -8,7 +8,7 @@ public class grab : MonoBehaviour
     public Rigidbody rb; // Rigidbody of the player or hand
     public int mouseButtonIndex; // 0 = Left Mouse Button, 1 = Right Mouse Button
     private GameObject grabbedObject; // Object currently being grabbed
-    private bool alreadyGrabbing = false;
+    private bool isGrabbing = false; // Toggle for grab state
 
     void Start()
     {
@@ -24,109 +24,107 @@ public class grab : MonoBehaviour
 
     void Update()
     {
-        // Trigger animation when mouse button is pressed
+        // Check for mouse button click
         if (Input.GetMouseButtonDown(mouseButtonIndex))
         {
-            animator.SetBool(mouseButtonIndex == 0 ? "isLeftUp" : "isRightUp", true);
-            alreadyGrabbing = true;
-
-            // Attempt to grab object if available
-            TryGrabObject();
-        }
-        else if (Input.GetMouseButtonUp(mouseButtonIndex))
-        {
+            if (isGrabbing)
+            {
+                // Release the object
+                animator.SetBool(mouseButtonIndex == 0 ? "isLeftUp" : "isRightUp", true);
+                ReleaseObject();
+            }
+            else
+            {
+                // Grab the object
+                TryGrabObject();
+            }
             animator.SetBool(mouseButtonIndex == 0 ? "isLeftUp" : "isRightUp", false);
-            alreadyGrabbing = false;
-
-            // Release object if grabbing
-            ReleaseObject();
+            // Toggle grabbing state
+            isGrabbing = !isGrabbing;
         }
     }
 
     private void TryGrabObject()
     {
-
         if (grabbedObject != null)
         {
-            // Disable Rigidbody physics on the grabbed object
             Rigidbody grabbedRb = grabbedObject.GetComponent<Rigidbody>();
-            if (grabbedRb != null)
+            if (grabbedRb == null)
             {
-                grabbedRb.isKinematic = true;
+                Debug.LogWarning("Grabbed object does not have a Rigidbody!");
+                return;
             }
-            //if (grabbedObject != null)
-            //{
-            // Rigidbody grabbedRb = grabbedObject.GetComponent<Rigidbody>();
-            //if (grabbedRb == null)
-            // {
-            // Debug.LogError("Grabbed object needs a Rigidbody!");
-            //return;
-            // }
 
             // Parent the grabbed object to the hand
             grabbedObject.transform.SetParent(this.transform);
 
-            Debug.Log("Object grabbed and parented!");
+            // Ensure Rigidbody is NOT kinematic so it responds to forces
+            grabbedRb.isKinematic = false;
 
-            if (grabbedRb != rb)
-                    {
-                        FixedJoint joint = grabbedObject.AddComponent<FixedJoint>();
-                        joint.connectedBody = rb;
-                        joint.breakForce = 10000f; // Prevent joint from breaking easily
-                        joint.breakTorque = 10000f;
+            // Add a FixedJoint to the grabbed object
+            FixedJoint joint = grabbedObject.GetComponent<FixedJoint>();
+            if (joint == null) // Ensure no duplicate joints
+            {
+                joint = grabbedObject.AddComponent<FixedJoint>();
+            }
+            joint.connectedBody = rb;
+            joint.breakForce = 10000f;
+            joint.breakTorque = 10000f;
 
-                        // Adjust Rigidbody properties for stability
-                        rb.mass = Mathf.Max(rb.mass, grabbedRb.mass); // Ensure arm's mass is sufficient
-                        rb.drag = 1f;
-                        rb.angularDrag = 5f;
-
-                        Debug.Log("Object grabbed!");
-                    }
-                    else
-                    {
-                        Debug.LogWarning("Cannot attach joint to the same Rigidbody!");
-                    }
-                
-            //}
+            Debug.Log("Object grabbed and can move!");
+        }
+        else
+        {
+            Debug.LogWarning("No object available to grab!");
         }
     }
 
-                private void ReleaseObject()
 
-                {
-                    if (grabbedObject != null)
-                    {
-                        // Re-enable Rigidbody physics
-                        Rigidbody grabbedRb = grabbedObject.GetComponent<Rigidbody>();
-                        if (grabbedRb != null)
-                        {
-                            grabbedRb.isKinematic = false;
-                        }
-
-                        // Unparent the grabbed object
-                        grabbedObject.transform.SetParent(null);
-                        grabbedObject = null;
-
-                        Debug.Log("Object released!");
-                    }
-                }
-
-
-
-                private void OnTriggerEnter(Collider other)
-                {
-                    if (other.gameObject.CompareTag("Item"))
-                    {
-                        grabbedObject = other.gameObject;
-                    }
-                }
-
-                private void OnTriggerExit(Collider other)
-                {
-                    if (!alreadyGrabbing && other.gameObject == grabbedObject)
-                    {
-                        grabbedObject = null;
-                    }
-                }
+    private void ReleaseObject()
+    {
+        if (grabbedObject != null)
+        {
+            // Re-enable Rigidbody physics
+            Rigidbody grabbedRb = grabbedObject.GetComponent<Rigidbody>();
+            if (grabbedRb != null)
+            {
+               // grabbedRb.isKinematic = false;
             }
-        
+
+            // Remove FixedJoint
+            FixedJoint joint = grabbedObject.GetComponent<FixedJoint>();
+            if (joint != null)
+            {
+                Destroy(joint);
+            }
+
+            // Unparent the grabbed object
+            grabbedObject.transform.SetParent(null);
+            grabbedObject = null;
+
+            Debug.Log("Object released!");
+        }
+        else
+        {
+            Debug.LogWarning("No object to release!");
+        }
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.gameObject.CompareTag("Item"))
+        {
+            grabbedObject = other.gameObject;
+        }
+    }
+
+    private void OnTriggerExit(Collider other)
+    {
+        if (!isGrabbing && other.gameObject == grabbedObject)
+        {
+            grabbedObject = null;
+        }
+    }
+
+}
+
