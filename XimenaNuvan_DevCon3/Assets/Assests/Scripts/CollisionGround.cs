@@ -47,18 +47,14 @@ public class CollisionGround : MonoBehaviour
      }
     }
 
-    //Invoke ground/wall cancel, since we can't check normals with CollisionExit
-    //float delay = 3f;
+   
      if (!cancellingGrounded)
      {
       cancellingGrounded = true;
-       // Invoke(nameof(StopGrounded), Time.deltaTime * delay);
+     
      }
      }
-   // private void OnCollisionEnter(Collision collision)
-   // {
-  // PlayerMove.grounded = true;
-   // }
+  
 }
 
 

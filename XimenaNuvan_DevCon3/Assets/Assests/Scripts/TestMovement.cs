@@ -56,13 +56,13 @@ public class TestMovement : MonoBehaviour
     {
         // Get input for horizontal and vertical movement
         float x = Input.GetAxis("Horizontal");
-        float z = Input.GetAxis("Vertical");
+        float y = Input.GetAxis("Vertical");
 
         animator.SetFloat("VelX", x);
-        animator.SetFloat("VelY", z);
+        animator.SetFloat("VelY", y);
 
 
-        Vector3 movement = playerBody.forward * z + playerBody.right * x;
+        Vector3 movement = playerBody.forward * y + playerBody.right * x;
         // Calculate movement direction
         //Vector3 movement = new Vector3(x, 0, y).normalized;
 

@@ -5,8 +5,8 @@ using UnityEngine;
 
 public class copyMotion : MonoBehaviour
 {
-    public Transform TargetLimb;
-    public bool mirror;
+    public Transform TargetLimb; //set the reference
+    public bool mirror; //Mirror?
     ConfigurableJoint cjoint;
     
 
